@@ -53,9 +53,9 @@ func TestClient_Friends(t *testing.T) {
 		defer server.Close()
 
 		c := &client{
-			AuthProvider: NewAPIKeyAuth("api-key"),
-			baseURL:      server.URL,
-			client:       http.DefaultClient,
+			// AuthProvider: NewAPIKeyAuth("api-key"),
+			baseURL: server.URL,
+			client:  http.DefaultClient,
 		}
 
 		_, err := c.Friends(context.Background())

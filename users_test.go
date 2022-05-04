@@ -54,9 +54,9 @@ func TestClient_CurrentUser(t *testing.T) {
 		defer server.Close()
 
 		c := &client{
-			AuthProvider: NewAPIKeyAuth("api-key"),
-			baseURL:      server.URL,
-			client:       http.DefaultClient,
+			// AuthProvider: NewAPIKeyAuth("api-key"),
+			baseURL: server.URL,
+			client:  http.DefaultClient,
 		}
 
 		_, err := c.CurrentUser(context.Background())
@@ -94,9 +94,9 @@ func TestClient_UserByID(t *testing.T) {
 		defer server.Close()
 
 		c := &client{
-			AuthProvider: NewAPIKeyAuth("api-key"),
-			baseURL:      server.URL,
-			client:       http.DefaultClient,
+			// AuthProvider: NewAPIKeyAuth("api-key"),
+			baseURL: server.URL,
+			client:  http.DefaultClient,
 		}
 
 		_, err := c.UserByID(context.Background(), 1313)
@@ -162,9 +162,9 @@ func TestClient_UpdateUser(t *testing.T) {
 		defer server.Close()
 
 		c := &client{
-			AuthProvider: NewAPIKeyAuth("api-key"),
-			baseURL:      server.URL,
-			client:       http.DefaultClient,
+			// AuthProvider: NewAPIKeyAuth("api-key"),
+			baseURL: server.URL,
+			client:  http.DefaultClient,
 		}
 
 		_, err := c.UpdateUser(context.Background(), 1313,
