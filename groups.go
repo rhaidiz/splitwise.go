@@ -84,12 +84,12 @@ func (c client) Groups(ctx context.Context) ([]Group, error) {
 		return nil, err
 	}
 
-	token, err := c.AuthProvider.Auth()
-	if err != nil {
-		return nil, err
-	}
+	// token, err := c.AuthProvider.Auth()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	req.Header.Add("Authorization", "Bearer "+token)
+	// req.Header.Add("Authorization", "Bearer "+token)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -118,12 +118,12 @@ func (c client) GroupByID(ctx context.Context, id uint64) (*Group, error) {
 		return nil, err
 	}
 
-	token, err := c.AuthProvider.Auth()
-	if err != nil {
-		return nil, err
-	}
+	// token, err := c.AuthProvider.Auth()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	req.Header.Add("Authorization", "Bearer "+token)
+	// req.Header.Add("Authorization", "Bearer "+token)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, err

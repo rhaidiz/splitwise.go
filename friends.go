@@ -49,12 +49,12 @@ func (c client) Friends(ctx context.Context) ([]Friend, error) {
 		return nil, err
 	}
 
-	token, err := c.AuthProvider.Auth()
-	if err != nil {
-		return nil, err
-	}
+	// token, err := c.AuthProvider.Auth()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	req.Header.Add("Authorization", "Bearer "+token)
+	// req.Header.Add("Authorization", "Bearer "+token)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
