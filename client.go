@@ -2,7 +2,6 @@ package splitwise
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -19,7 +18,7 @@ type Client interface {
 
 type Oauth2Client interface {
 	GetOAuth2AuthorizeURL() string
-	SetOAuth2Code(code string)
+	SetOAuth2Code(code string) error
 }
 
 type transport struct {
@@ -49,7 +48,7 @@ func (c client) GetOAuth2AuthorizeURL() string {
 	return url
 }
 
-func (c *client) SetOAuth2Code(code string) {
+func (c *client) SetOAuth2Code(code string) error {
 	ctx := context.Background()
 	// Use the custom HTTP client when requesting a token.
 	httpClient := &http.Client{Timeout: 2 * time.Second}
@@ -57,12 +56,14 @@ func (c *client) SetOAuth2Code(code string) {
 
 	tok, err := c.conf.Exchange(ctx, code)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	client := c.conf.Client(ctx, tok)
 	c.baseURL = ServerAddress
 	c.client = client
+
+	return nil
 }
 
 type client struct {
