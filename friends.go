@@ -42,8 +42,8 @@ type friendsResponse struct {
 	Friends []Friend `json:"friends"`
 }
 
-func (c client) Friends(ctx context.Context) ([]Friend, error) {
-	url := c.baseURL + "/api/v3.0/get_friends"
+func (c SClient) Friends(ctx context.Context) ([]Friend, error) {
+	url := c.BaseURL + "/api/v3.0/get_friends"
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (c client) Friends(ctx context.Context) ([]Friend, error) {
 	// }
 
 	// req.Header.Add("Authorization", "Bearer "+token)
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

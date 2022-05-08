@@ -77,8 +77,8 @@ type groupsResponse struct {
 	Groups []Group `json:"groups"`
 }
 
-func (c client) Groups(ctx context.Context) ([]Group, error) {
-	url := c.baseURL + "/api/v3.0/get_groups"
+func (c SClient) Groups(ctx context.Context) ([]Group, error) {
+	url := c.BaseURL + "/api/v3.0/get_groups"
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (c client) Groups(ctx context.Context) ([]Group, error) {
 	// }
 
 	// req.Header.Add("Authorization", "Bearer "+token)
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -111,8 +111,8 @@ type groupByIDResponse struct {
 	Group Group `json:"group"`
 }
 
-func (c client) GroupByID(ctx context.Context, id uint64) (*Group, error) {
-	url := c.baseURL + "/api/v3.0/get_group/" + strconv.FormatUint(id, 10)
+func (c SClient) GroupByID(ctx context.Context, id uint64) (*Group, error) {
+	url := c.BaseURL + "/api/v3.0/get_group/" + strconv.FormatUint(id, 10)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (c client) GroupByID(ctx context.Context, id uint64) (*Group, error) {
 	// }
 
 	// req.Header.Add("Authorization", "Bearer "+token)
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

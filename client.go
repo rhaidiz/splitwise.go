@@ -3,7 +3,6 @@ package splitwise
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"golang.org/x/oauth2"
 )
@@ -13,12 +12,6 @@ type Client interface {
 	Groups
 	Friends
 	Expenses
-	Oauth2Client
-}
-
-type Oauth2Client interface {
-	GetOAuth2AuthorizeURL() string
-	SetOAuth2Code(code string) error
 }
 
 type transport struct {
@@ -32,45 +25,24 @@ const (
 
 // NewClient returns a new Client with the given AuthProvider
 func NewClient(authProvider AuthProvider) Client {
-	return &client{
+	return &SClient{
 		//AuthProvider: authProvider,
-		baseURL: ServerAddress,
-		client:  &http.Client{Transport: &transport{underlyingTransport: http.DefaultTransport, auth: authProvider}},
+		BaseURL:    ServerAddress,
+		HttpClient: http.Client{Transport: &transport{underlyingTransport: http.DefaultTransport, auth: authProvider}},
 	}
 }
 
-func NewAuth0Client(conf *oauth2.Config) Client {
-	return &client{conf: conf}
-}
-
-func (c client) GetOAuth2AuthorizeURL() string {
-	url := c.conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	return url
-}
-
-func (c *client) SetOAuth2Code(code string) error {
+func NewAuth0Client(conf *oauth2.Config, tok *oauth2.Token) Client {
 	ctx := context.Background()
-	// Use the custom HTTP client when requesting a token.
-	httpClient := &http.Client{Timeout: 2 * time.Second}
-	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
-
-	tok, err := c.conf.Exchange(ctx, code)
-	if err != nil {
-		return err
-	}
-
-	client := c.conf.Client(ctx, tok)
-	c.baseURL = ServerAddress
-	c.client = client
-
-	return nil
+	client := conf.Client(ctx, tok)
+	return &SClient{BaseURL: ServerAddress, HttpClient: *client, Conf: *conf}
 }
 
-type client struct {
-	// AuthProvider
-	baseURL string
-	client  *http.Client
-	conf    *oauth2.Config
+type SClient struct {
+	AuthProvider
+	BaseURL    string
+	HttpClient http.Client
+	Conf       oauth2.Config
 }
 
 func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {

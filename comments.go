@@ -14,6 +14,7 @@ type Comments interface {
 }
 
 type Comment struct {
+	Comment_type string `json:"comment_type"`
 }
 
 type CreateCommentDTO struct {

@@ -4,13 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	_ "log"
 	"net/http"
+	"time"
 )
 
 // Expenses contains method to work with expense resource
 type Expenses interface {
 	// ExpensesByDate returns current user's expenses
 	ExpensesByDate(ctx context.Context, dated_after string, dated_before string) (*Exps, error)
+	ExpensesByDateGroup(ctx context.Context, dated_after string, dated_before string, group_name string) (*Exps, error)
 
 	// ExpenseByID returns information of an expense identified by id argument
 	// ExpenseByID(ctx context.Context, id uint64) (*Expense, error)
@@ -26,14 +29,17 @@ type Expenses interface {
 }
 
 type Expense struct {
-	Cost        string `json:"cost"`
-	Description string `json:"description"`
-	Date        string `json:"date"`
+	Cost        string    `json:"cost"`
+	Description string    `json:"description"`
+	Date        time.Time `json:"date"`
 	Category    struct {
 		Id   int    `json:"id"`
 		Name string `json:"name"`
 	} `json:"category"`
-	Users []ExpenseUser `json:"users"`
+	Users      []ExpenseUser `json:"users"`
+	Details    string        `json:"details"`
+	Comments   []Comment     `json:"comments"`
+	Deleted_at time.Time     `json:"deleted_at"`
 }
 
 type ExpenseUser struct {
@@ -48,15 +54,35 @@ type Exps struct {
 	Exps []Expense `json:"expenses"`
 }
 
-func (c client) ExpensesByDate(ctx context.Context, dated_after string, dated_before string) (*Exps, error) {
-	url := fmt.Sprintf("%s/api/v3.0/get_expenses?limit=0&dated_after=%sdated_before=%s", c.baseURL, dated_after, dated_before)
+func (c SClient) ExpensesByDate(ctx context.Context, dated_after string, dated_before string) (*Exps, error) {
+	url := fmt.Sprintf("%s/api/v3.0/get_expenses?limit=0&dated_after=%s&dated_before=%s", c.BaseURL, dated_after, dated_before)
+	return c.get_expenses(ctx, url)
+}
 
+func (c SClient) ExpensesByDateGroup(ctx context.Context, dated_after string, dated_before string, group_name string) (*Exps, error) {
+	g, err := c.Groups(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var group_id int
+	for _, v := range g {
+		if v.Name == group_name {
+			group_id = int(v.ID)
+		}
+	}
+
+	url := fmt.Sprintf("%s/api/v3.0/get_expenses?limit=0&dated_after=%s&dated_before=%s&group_id=%d", c.BaseURL, dated_after, dated_before, group_id)
+	return c.get_expenses(ctx, url)
+}
+
+func (c SClient) get_expenses(ctx context.Context, url string) (*Exps, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

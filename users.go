@@ -57,8 +57,8 @@ type CurrentUser struct {
 }
 
 // CurrentUser returns information about the current user
-func (c client) CurrentUser(ctx context.Context) (*CurrentUser, error) {
-	url := c.baseURL + "/api/v3.0/get_current_user"
+func (c SClient) CurrentUser(ctx context.Context) (*CurrentUser, error) {
+	url := c.BaseURL + "/api/v3.0/get_current_user"
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (c client) CurrentUser(ctx context.Context) (*CurrentUser, error) {
 	// }
 
 	// req.Header.Add("Authorization", "Bearer "+token)
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -106,8 +106,8 @@ type User struct {
 }
 
 // UserByID returns a user information by their id.
-func (c client) UserByID(ctx context.Context, id uint64) (*User, error) {
-	url := c.baseURL + "/api/v3.0/get_user/" + strconv.FormatUint(id, 10)
+func (c SClient) UserByID(ctx context.Context, id uint64) (*User, error) {
+	url := c.BaseURL + "/api/v3.0/get_user/" + strconv.FormatUint(id, 10)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (c client) UserByID(ctx context.Context, id uint64) (*User, error) {
 	// }
 
 	// req.Header.Add("Authorization", "Bearer "+token)
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -140,8 +140,8 @@ type updateUserResponse struct {
 	User CurrentUser `json:"user"`
 }
 
-func (c client) UpdateUser(ctx context.Context, id uint64, fields ...UserUpdatableField) (*CurrentUser, error) {
-	url := c.baseURL + "/api/v3.0/update_user/" + strconv.FormatUint(id, 10)
+func (c SClient) UpdateUser(ctx context.Context, id uint64, fields ...UserUpdatableField) (*CurrentUser, error) {
+	url := c.BaseURL + "/api/v3.0/update_user/" + strconv.FormatUint(id, 10)
 
 	body := map[string]interface{}{}
 	for _, field := range fields {
@@ -165,7 +165,7 @@ func (c client) UpdateUser(ctx context.Context, id uint64, fields ...UserUpdatab
 
 	// req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Add("Content-Type", "application/json")
-	res, err := c.client.Do(req)
+	res, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

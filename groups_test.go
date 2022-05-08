@@ -96,10 +96,10 @@ func TestClient_Groups(t *testing.T) {
 		}))
 		defer server.Close()
 
-		c := &client{
+		c := &SClient{
 			// AuthProvider: NewAPIKeyAuth("api-key"),
-			baseURL: server.URL,
-			client:  http.DefaultClient,
+			BaseURL:    server.URL,
+			HttpClient: http.DefaultClient,
 		}
 
 		_, err := c.Groups(context.Background())
@@ -196,10 +196,10 @@ func TestClient_GroupByID(t *testing.T) {
 		}))
 		defer server.Close()
 
-		c := &client{
+		c := &SClient{
 			// AuthProvider: NewAPIKeyAuth("api-key"),
-			baseURL: server.URL,
-			client:  http.DefaultClient,
+			BaseURL:    server.URL,
+			HttpClient: http.DefaultClient,
 		}
 
 		_, err := c.GroupByID(context.Background(), 1)
